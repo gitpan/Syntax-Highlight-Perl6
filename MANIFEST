@@ -1,0 +1,11 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/00-syntax.t
+lib/Syntax/Highlight/Perl6.pm
+lib/Cursor.pmc
+lib/STD.pmc
+lib/mangle.pl
+lib/LazyMap.pm
+META.yml                                 Module meta-data (added by MakeMaker)
