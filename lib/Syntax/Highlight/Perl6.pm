@@ -1,71 +1,101 @@
 package Syntax::Highlight::Perl6;
 
 # core modules & directives
-use 5.010000;
+use 5.010;
 use strict;
 use warnings;
 use English;
 use Carp;
 use Encode;
+use File::Basename qw(dirname);
+use File::Spec;
+use Cwd qw(realpath);
 require Exporter;
 
 # cpan modules
-use File::Slurp qw(read_file);
 use YAML::Dumper;
 use Term::ANSIColor;
 
 # Larry's STD.pm
 use STD;
 
+# exports and version
 our @ISA = qw(Exporter);
-
-our %EXPORT_TAGS = ( 'all' => [ qw() ] );
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+our @EXPORT_OK = qw();
 our @EXPORT = qw();
-
-our $VERSION = '0.01';
+our $VERSION = '0.01_01';
 
 # These are needed for redspans
 $::ACTIONS = 'Actions';
-our $src_text;
-our $parser;
-our @loc = ();
 
-#XXX- document
+# my module variables
+my ($src_text,$parser,@loc);
+my $parsed_lazily = 0;
+
+#find out the real path of the rsc directory
+croak "Syntax::Highlight::Perl6 cannot see where it is installed"
+    unless -f __FILE__;
+my $SHARED = realpath(File::Spec->join(
+            dirname(__FILE__),"../../rsc"));
+
+#----------------------------------------------------------------
+# Returns the syntax highlighting object. It needs a hash 
+# of options.
+#----------------------------------------------------------------
 sub new($%) {
     my ($class, %options) = @ARG;
     $options{rule} = $options{rule} // 'comp_unit';
     $options{clean_html} = $options{clean_html} // 1;
-    $options{file} = $options{file} // 'FILE-NAME';
-    #XXX- check when text is zero
-    if(!$options{text}) {
-        croak "'text' option not found in $class->new";
-    }
-    my $self = bless(\%options, $class);
+    $options{file} = $options{file} // qq{option 'file' is not set'};
+    $options{utf8_decode} = $options{utf8_decode} // 1;
 
-    #XXX- this should be done on-demand (as lazily as possible)
- 
-    #XXX- do we need to convert to utf8 or make it a disabled option? 
-    # slurp the file for parsing and redspans
-    $src_text = decode('utf8', $self->{text} );
-    $loc[length($src_text) - 1] = [];
-    $parser = STD->parse($src_text, $self->{rule});
-
-    return $self;
+    #is 'text' undefined?
+    croak "'text' option is not found in $class->new" 
+        if (!$options{text});
+    
+    return bless(\%options, $class);
 }
 
-=item snippet_html
+#----------------------------------------------------------------
+# Lazily parses the source string using STD.pm (only once)
+# (private)
+#----------------------------------------------------------------
+sub _lazy_parse($) {
+    my $self = shift;
+    
+    if(!$parsed_lazily) {
+    
+        # utf8-decode if required
+        $src_text = $self->{utf8_decode} ? 
+            decode('utf8', $self->{text} ) : 
+            $self->{text};
+        
+        #grow the loc array while checking for empty strings 
+        my $len = length($src_text);
+        $src_text = " " if $len == 0;
+        $loc[$len - 1] = [];
 
-This is same as C<highlight_perl6_full> when --snippet-html is used.
-No more javascript tree viewer or anything fancy. 
-Only nodes that have a color are printed. Not optimal but works ;-)
-=cut
+        #STD parse the text for the rule provided
+        $parser = STD->parse($src_text, $self->{rule});
+
+        #we parsed it lazily...
+        $parsed_lazily = 1;
+    }
+}
+ 
+
+#---------------------------------------------------------------------
+# Returns snippet htmls which can embedded without any side effects
+# on your page
+#---------------------------------------------------------------------
 sub snippet_html($) {
-    my ($self) = @ARG;
+    my $self = shift;
     my $str = "";
     my %colors = ();
 
-    my $CSS = "STD_syntax_highlight.css";
+    $self->_lazy_parse();
+    
+    my $CSS = File::Spec->join($SHARED,"p6_style.css");
     open CSS_FILE, $CSS
         or die "Could not open $CSS: $OS_ERROR\n";
     my $line;
@@ -80,7 +110,7 @@ sub snippet_html($) {
 
     local *spit_snippet_html = sub {
         my ($i, $buffer, $rule, $tree) = @ARG;
-        $buffer = escape_html($buffer);
+        $buffer = _escape_html($buffer);
         my $style = $colors{$rule};
         if($rule) {
             $str .= qq{<span style="$style">$buffer</span>};
@@ -88,25 +118,24 @@ sub snippet_html($) {
             $str .= $buffer;
         }
     };
-    $self->redspans_traverse(\&spit_snippet_html,%colors); 
+    _redspans_traverse(\&spit_snippet_html,%colors); 
 
     $str .= "</pre>";
 
     $str;
 }
-
-=item simple_html
-
-This is same as C<highlight_perl6_full> when --simple-html is used.
-No more javascript tree viewer or anything fancy. 
-Only nodes that have a color are printed. Not optimal but works ;-)
-=cut
-sub simple_html {
-    my ($self) = @ARG;
+#---------------------------------------------------------------
+# Returns the Perl 6 highlighted HTML string 
+# (without the javascript stuff).
+#---------------------------------------------------------------
+sub simple_html($) {
+    my $self = shift;
     my $str = "";
     my %colors = ();
 
-    my $CSS = "STD_syntax_highlight.css";
+    $self->_lazy_parse();
+
+    my $CSS = File::Spec->join($SHARED,"p6_style.css");
     open CSS_FILE, $CSS
         or die "Could not open $CSS: $OS_ERROR\n";
     my $line;
@@ -118,9 +147,9 @@ sub simple_html {
     close CSS_FILE;
 
     # slurp css inline it
-    my $css = qq{<link href="../$CSS" rel="stylesheet" type="text/css">};
+    my $css = qq{<link href="$CSS" rel="stylesheet" type="text/css">};
     if(!$self->{clean_html}) {
-        $css = read_file($CSS)
+        $css = _slurp($CSS)
             or die "Error while slurping file: $OS_ERROR\n";
         $css = qq{<style type="text/css">\n$css\n</style>};
     }
@@ -142,7 +171,7 @@ HTML
 
     local *spit_simple_html = sub {
         my ($i, $buffer, $rule, $tree) = @ARG;
-        $buffer = escape_html($buffer);
+        $buffer = _escape_html($buffer);
         if($rule) {
             $str .= qq{<span class="$rule">$buffer</span>};
         } else {
@@ -150,7 +179,7 @@ HTML
         }
     };
 
-    $self->redspans_traverse(\&spit_simple_html,%colors); 
+    _redspans_traverse(\&spit_simple_html,%colors); 
 
     $str .= <<"HTML";
     </pre>
@@ -161,20 +190,21 @@ HTML
    $str;
 }
 
-=item full_html
-
-Generates the Perl6 highlighted HTML string for STD parse tree provided. 
-The resources can be inlined (by default) or externalized (--clean-html). 
-=cut
-sub full_html {
-    my ($self) = @ARG;
+#-------------------------------------------------------------------
+# Returns the Perl 6 highlighted HTML string. The HTML consists of a
+# JavaScript Parse Tree Viewer along with CSS-styling.
+#-------------------------------------------------------------------
+sub full_html($) {
+    my $self = shift;
     my $str = "";
+
+    $self->_lazy_parse();
 
     # slurp libraries and javascript to inline them
     my ($JQUERY_JS,$JS,$CSS) = (
-        'jquery-1.2.6.pack.js', 
-        'STD_syntax_highlight.js',
-        'STD_syntax_highlight.css');
+        File::Spec->join($SHARED,'jquery-1.2.6.pack.js'), 
+        File::Spec->join($SHARED,'p6_style.js'),
+        File::Spec->join($SHARED,'p6_style.css'));
     my %colors = ();
     my $line;
     open CSS_FILE, $CSS
@@ -186,15 +216,15 @@ sub full_html {
     }
     close CSS_FILE;
 
-    my $jquery_js = qq{<script type="text/javascript" src="../$JQUERY_JS"></script>};
-    my $js = qq{<script type="text/javascript" src="../$JS"></script>};
-    my $css = qq{<link href="../$CSS" rel="stylesheet" type="text/css">};
+    my $jquery_js = qq{<script type="text/javascript" src="$JQUERY_JS"></script>};
+    my $js = qq{<script type="text/javascript" src="$JS"></script>};
+    my $css = qq{<link href="$CSS" rel="stylesheet" type="text/css">};
     if(!$self->{clean_html}) {
-        $jquery_js = read_file($JQUERY_JS) 
+        $jquery_js = _slurp($JQUERY_JS) 
             or die "Error while slurping file: $OS_ERROR\n";    
-        $js = read_file($JS) 
+        $js = _slurp($JS) 
             or die "Error while slurping file: $OS_ERROR\n";
-        $css = read_file($CSS)
+        $css = _slurp($CSS)
             or die "Error while slurping file: $OS_ERROR\n";
         $jquery_js = qq{<script type="text/javascript">\n$jquery_js\n</script>};
         $js = qq{<script type="text/javascript">\n$js\n</script>};
@@ -226,7 +256,7 @@ HTML
 
     local *spit_full_html = sub {
         my ($i, $buffer, $rule, $tree) = @ARG;
-        $buffer = escape_html($buffer);
+        $buffer = _escape_html($buffer);
         $str .= qq{<span id="tree_$i" style="display:none;">$tree</span>};
         if($rule) {
             $str .= qq{<span id="node_$i" class="$rule">$buffer</span>};
@@ -235,7 +265,7 @@ HTML
         }
     };
 
-    $self->redspans_traverse(\&spit_full_html,%colors); 
+    _redspans_traverse(\&spit_full_html,%colors); 
 
     $str .= <<"HTML";
     </pre>
@@ -246,18 +276,17 @@ HTML
     $str;
 }
 
-=item ansi
-
-This is same as C<highlight_perl6_full> when --ansi-text is used.
-No more javascript tree viewer or anything fancy. 
-Only nodes that have a color are printed. Not optimal but works ;-)
-=cut
-sub ansi {
-    my ($self) = @ARG;
+#---------------------------------------------------------------
+# Returns a Perl highlighted ANSI escape color string.
+#---------------------------------------------------------------
+sub ansi_text($) {
+    my $self = shift;
     my $str = "";
     my %colors = ();
 
-    my $ANSI = "STD_syntax_highlight.ansi";
+    $self->_lazy_parse();
+
+    my $ANSI = File::Spec->join($SHARED,"p6_style.ansi");
     open ANSI_FILE, $ANSI
         or die "Could not open $ANSI: $OS_ERROR\n";
     my $line;
@@ -278,22 +307,24 @@ sub ansi {
         }
     };
 
-    $self->redspans_traverse(\&spit_ansi_text,%colors); 
+    _redspans_traverse(\&spit_ansi_text,%colors); 
 
     $str;
 }
 
-
-=item highlight_perl6_yaml
-
-Spits out YAML that can be useful for the future
-=cut
-sub yaml {
-    my ($self) = @ARG;
+#---------------------------------------------------------------
+# Returns a Perl 5 array containing parse tree records.
+# The array consists of one or more of the following record:
+#   ($position, $buffer, $rule_name, $parse_tree)
+#---------------------------------------------------------------
+sub parse_trees($) {
+    my $self = shift;
     my $str = "";
     my %colors = ();
 
-    my $ANSI = "STD_syntax_highlight.ansi";
+    $self->_lazy_parse();
+
+    my $ANSI = File::Spec->join($SHARED,"p6_style.ansi");
     open ANSI_FILE, $ANSI
         or die "Could not open $ANSI: $OS_ERROR\n";
     my $line;
@@ -304,26 +335,23 @@ sub yaml {
     }
     close ANSI_FILE;
 
-    my @yaml = ();
-    local *spit_yaml = sub {
-        push @yaml, @ARG;
+    my @parse_trees = ();
+    local *spit_parse_tree = sub {
+        push @parse_trees, @ARG;
     };
 
-    $self->redspans_traverse(\&spit_yaml,%colors); 
+    _redspans_traverse(\&spit_parse_tree,%colors); 
 
-    my $dumper = YAML::Dumper->new;
-    $dumper->indent_width(4);
-    $str .= $dumper->dump(@yaml);
-
-    $str;
+    @parse_trees;
 }
 
-=item redspans_traverse
-
-    Walk the path that no one wanted to travel ;)
-=cut
-sub redspans_traverse($$%) {
-    my ($self, $process_buffer,%colors) = @ARG;
+#---------------------------------------------------------------
+#    Helper private method that traverses STD.pm's parse 
+# tree array. It needs a callback process_buffer and a 
+# colors hash.
+#---------------------------------------------------------------
+sub _redspans_traverse($%) {
+    my ($process_buffer,%colors) = @ARG;
 
     my ($last_tree,$buffer, $last_type) = ("","","");
     for my $i (0 .. @loc-1) {
@@ -353,11 +381,7 @@ sub redspans_traverse($$%) {
                     if($last_type ne '') {
                         $rule_to_color = $last_type;
                         $last_type = '';
-                    } #elsif($parser->is_type($buffer)) {
-                        #$rule_to_color = '_type';
-                    #} elsif($parser->is_routine($buffer)) {
-                        #$rule_to_color = '_routine';
-                    #} 
+                    } 
                 } elsif($last_tree =~ /\ssigil/) {
                     given($buffer) {
                         when ('$') { $last_type = '_scalar'; }
@@ -378,8 +402,11 @@ sub redspans_traverse($$%) {
     }
 }
 
-###################################################################
+#------------------------------------------------------------------
 # R E D S P A N S
+# STD.pm calls this method when you call STD->parse(...)
+# and we populate @loc with action references and parse trees...
+#------------------------------------------------------------------
 { 
     package Actions;
 
@@ -410,12 +437,11 @@ sub redspans_traverse($$%) {
     sub comp_unit { }
 }
 
-
-=item escape_html
-
-Converts some characters to their equivalent html entities 
-=cut
-sub escape_html {
+#---------------------------------------------------------------
+# Private method to converts characters to their equivalent 
+# html entities.
+#----------------------------------------------------------------
+sub _escape_html($) {
     my $str = shift;
     my %esc = (
         '<'     => '&lt;',
@@ -428,34 +454,130 @@ sub escape_html {
     return $str;
 }
 
+#-----------------------------------------------------
+# Load file into a scalar without File::Slurp
+# Thanks ofcourse to this post
+# http://www.perlmonks.org/?node_id=20235
+#-----------------------------------------------------
+sub _slurp($) {
+    local $/ =<> if local @ARGV = @_
+}
+
 1;
+
+#------------------ T H E   E N D --------------------
 
 __END__
 
 =head1 NAME
 
-Syntax::Highlight::Perl6 - Perl 6 source code highlighter
+Syntax::Highlight::Perl6 - Perl 6 syntax highlighter
 
 =head1 SYNOPSIS
 
-  use Syntax::Highlight::Perl6;
-  
-  my $crayon = Syntax::Highlight::Perl6->new(
-    $file => \*STDIN
-  );
-  print $crayon->snippet_html;
-  print $crayon->simple_html;
-  print $crayon->full_html;
-  print $crayon->ansi;
-  print $crayon->yaml;
+    ### NOTE: This is needed and will be removed in future releases
+    use STD;
+    use Syntax::Highlight::Perl6;
+
+    # Creates the Perl6 syntax highlighter object
+    my $p = Syntax::Highlight::Perl6->new(
+        text => 'my $foo;'
+    );
+
+    # Prints html that can be embedded in your pages
+    print $p->snippet_html;
+
+    # Prints html with css (useful for full pages)
+    print $p->simple_html;
+
+    # Prints html that has a JavaScript parse tree viewer
+    print $p->full_html;
+
+    # Prints ANSI escaped color sequences (useful for console and IRC output)
+    print $p->ansi_text;
+
+    # Prints the Perl 5 array of parse trees (useful for building stuff on top of it) 
+    print $p->parse_trees;
 
 =head1 DESCRIPTION
 
-Highlights Perl 6 source code using STD.pm into html, ansi-escaped text and YAML.
+Highlights Perl 6 source code. The code is parsed using Larry Wall's STD.pm. 
 
-=head2 EXPORT
+The available output formats are:
 
-None by default.
+=over
+
+=item *
+    HTML (snippet,simple and full)
+
+=item *
+    ANSI escaped color sequences
+
+=item *
+    Perl 5 array of parse trees
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item new(options)
+
+Returns the syntax highlighting object. It needs a hash of options.
+
+=over 4
+
+=item text
+
+This is a B<required> option. 
+This is where you should provide the Perl 6 code.
+
+=item rule
+
+parse rule name for STD.pm to parse against (default: B<comp_unit>)
+
+=item clean_html
+
+Flag to enable/disable CSS/JavaScript HTML inlining. (default: 1)
+
+=item file
+
+file name string in HTML modes (default: a warning message)
+
+=item utf8_decode
+
+Flag to enable/disable utf8 decoding. (default: 1)
+
+=back
+
+=item snippet_html
+
+Returns the Perl 6 highlighted HTML string that can be embedded. 
+No CSS or JavaScript is inside.
+
+=item simple_html
+
+Returns the Perl 6 highlighted HTML string. The HTML is the same as 
+C<full_html> but lacks a JavaScript Parse Tree Viewer. 
+
+=item full_html
+
+Returns the Perl 6 highlighted HTML string. The HTML consists of a 
+JavaScript Parse Tree Viewer along with CSS-styling. 
+It can inlined if C<clean_html> option is 0. 
+
+=item ansi_text
+
+Returns a Perl highlighted ANSI escape color string.
+
+=item parse_trees
+
+Returns a Perl 5 array containing parse tree records.
+The array consists of one or more of the following record:
+  ($position, $buffer, $rule_name, $parse_tree)
+
+=back
 
 =head1 SEE ALSO
 
@@ -472,19 +594,24 @@ See http://www.nntp.perl.org/group/perl.perl6.users/2008/07/msg788.html
 
 The initial STD tree traversal code was written by Paweł Murias (pmurias).
 
-The redspans traversal code was written by Larry Wall (TimToady).
-redspans stands for "...'red' for "reductions", and 'spans' from the 
-from/to span calculations"
+A C<gimme5>-generated Perl5 C<STD.pmc> is included to parse Perl 6 code.
 
-The browser code was written by Ahmad M. Zawawi (azawawi)
+The C<redspans> traversal code was written by Larry Wall (TimToady).
+
+C<redspans> stands for C<red> for reductions, and C<spans> from the 
+from/to span calculations".
+
+The javascript jQuery code was written by Ahmad M. Zawawi (azawawi)
 
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2008 by Ahmad Zawawi
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms asssssss
-at your option, any later version of Perl 5 you may have available.
+it under the same terms as the Artistic License 2.0
 
-=cut
+This library also includes the following libraries:
 
+STD.pm by Larry Wall (Artistic License 2.0 - same license)
+
+JQuery 1.2.6 by John Resig (dual licensed under the MIT and GPL licenses).

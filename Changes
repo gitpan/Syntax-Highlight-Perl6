@@ -1,6 +1,15 @@
-Revision history for Perl extension Syntax::Highlight::Perl6.
+Revision history for Syntax::Highlight::Perl6.
 
-0.01  Wed Dec 10 16:54:22 2008
-	- original version; created by h2xs 1.23 with options
-		-AXc -n Syntax::Highlight::Perl6
+0.01_01  Wed Dec 12 2008
+    - Bumped version to 0.01_01 (Developer release)
+    - Privatized some methods that you should not use
+    - Removed dependency on File::Slurp and YAML::Dumper
+    - Replaced yaml() method with parse_trees
+    - Renamed ansi() method with ansi_text
+    - Major refactoring and documentation fixes
+
+0.01  Wed Dec 11 2008
+	- Initial release (really alpha)
+
+
 
