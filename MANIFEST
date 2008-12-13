@@ -2,7 +2,6 @@ Changes
 Makefile.PL
 MANIFEST
 README
-META.yml
 t/00-syntax.t
 lib/Syntax/Highlight/Perl6.pm
 lib/Cursor.pmc
@@ -13,3 +12,4 @@ lib/rsc/p6_style.js
 lib/rsc/p6_style.css
 lib/rsc/p6_style.ansi
 lib/rsc/jquery-1.2.6.pack.js
+META.yml                                 Module meta-data (added by MakeMaker)
