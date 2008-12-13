@@ -14,6 +14,7 @@ require Exporter;
 
 # cpan modules
 use Term::ANSIColor;
+use Text::VimColor;
 
 # Larry's STD.pm
 use STD;
@@ -22,13 +23,14 @@ use STD;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw();
 our @EXPORT = qw();
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 
 # filename constants
 use constant FILE_CSS    => "p6_style.css";
 use constant FILE_ANSI   => "p6_style.ansi";
 use constant FILE_JS     => "p6_style.js";
 use constant FILE_JQUERY => "jquery-1.2.6.pack.js";
+use constant FILE_P6_VIM => "perl6.vim";
  
 # These are needed for redspans
 $::ACTIONS = 'Actions';
@@ -310,6 +312,22 @@ sub parse_trees($) {
     $parse_trees;
 }
 
+#---------------------------------------------------------------
+# Returns a Perl 6 VIM syntax highlighted string using 
+# Text::VimColor and perl6.vim 
+#---------------------------------------------------------------
+sub vim_html {
+    my $self = shift;
+
+    my $syntax = Text::VimColor->new(
+        string => $self->{text},
+        filetype => 'perl6',
+        html_full_page => 1
+    );
+
+    $syntax->html;
+}
+
 #--------------------------------------------------------------------
 # Reads the css file and return a hash of colors 
 #-------------------------------------------------------------------- 
@@ -464,8 +482,7 @@ sub _escape_html($) {
 # convert to shared package real resource path
 #-----------------------------------------------------
 sub _shared($) {
-    my $path = shift;
-    return File::Spec->join($SHARED, $path);
+    return File::Spec->join($SHARED, shift);
 }
 
 #-----------------------------------------------------
@@ -511,6 +528,9 @@ Syntax::Highlight::Perl6 - a Perl 6 syntax highlighter
 
     # Prints the Perl 5 array of parse trees (useful for building stuff on top of it) 
     print $p->parse_trees;
+
+    # Prints VIM syntax highlighted html
+    print $p->vim_html;
 
 =head1 DESCRIPTION
 
@@ -618,6 +638,13 @@ The array consists of one or more of the following record:
     #        'statementlist eat_terminator '
     #      ]
 
+=item vim_html()
+
+Returns the Perl 6 VIM-highlighted HTML string. This uses C<Text::VimColor>
+to utilize VIM's excellent syntax coloring engine. Please remember to copy
+perl6.vim to your .vim/syntax. And remember that this is purely for fun. 
+If you dont have vim, then it wont work.
+
 =back
 
 =head1 SEE ALSO
@@ -674,6 +701,8 @@ C<redspans> stands for C<red> for reductions, and C<spans> from the
 from/to span calculations".
 
 The JavaSript jQuery code was written by Ahmad M. Zawawi (azawawi)
+
+Thanks for perl6.vim Luke Palmer, Moritz Lenz, and Hinrik Ãn Sigurðsson
 
 =head1 COPYRIGHT AND LICENSE
 
