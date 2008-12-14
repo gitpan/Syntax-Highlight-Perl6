@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Syntax-Highlight-Perl6
-version:             0.024
+version:             0.025
 abstract:            a Perl 6 syntax highlighter
 license:             artistic_2
 author:              
@@ -9,8 +9,8 @@ generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     
     Moose:                         0
+    Readonly:                      0
     Term::ANSIColor:               0
-    Text::VimColor:                0
     YAML::Syck:                    0
 meta-spec:
     url:     http://module-build.sourceforge.net/META-spec-v1.3.html
