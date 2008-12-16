@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:                Syntax-Highlight-Perl6
-version:             0.025
-abstract:            a Perl 6 syntax highlighter
+version:             0.026
+abstract:            a Perl 6 Syntax Highlighter
 license:             artistic_2
 author:              
     - Ahmad M. Zawawi <ahmad.zawawi@gmail.com>
