@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 24434 2008-12-17 08:22:16Z azawawi $
+# $Id: Perl6.pm 24448 2008-12-17 20:03:38Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.028';
+our $VERSION = '0.029';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -37,8 +37,7 @@ Readonly my $FILE_P6_VIM => 'perl6.vim';
 $::ACTIONS = __PACKAGE__ . '::Actions';
 
 # my module variables
-my ($src_text,$parser,@loc);
-my $parsed_lazily = 0;
+my @loc;
 
 #find out the real path of the rsc directory
 if(! -f __FILE__) {
@@ -63,7 +62,11 @@ sub new {
     croak "'text' option is not found in $class->new"
         if (!$options{text});
 
-    return bless \%options, $class;
+    my $self = bless \%options, $class;
+    $self->{parser} = 0;
+    $self->{src_text} = 0;
+    $self->{parsed_lazily} = 0;
+    return $self;
 }
 
 #----------------------------------------------------------------
@@ -73,10 +76,10 @@ sub new {
 sub _lazy_parse {
     my $self = shift;
 
-    if(!$parsed_lazily) {
+    if(!$self->{parsed_lazily}) {
 
         # utf8-decode if required
-        $src_text = $self->{utf8_decode} ?
+        my $src_text = $self->{utf8_decode} ?
             decode('utf8', $self->{text} ) :
             $self->{text};
 
@@ -88,10 +91,13 @@ sub _lazy_parse {
         $loc[$len - 1] = [];
 
         #STD parse the text for the rule provided
-        $parser = STD->parse($src_text, $self->{rule});
+        $self->{parser} = STD->parse($src_text, $self->{rule});
 
         #we parsed it lazily...
-        $parsed_lazily = 1;
+        $self->{src_text} = $src_text;
+        @{$self->{loc}} = @loc;
+        @loc = ();
+        $self->{parsed_lazily} = 1;
     }
     return;
 }
@@ -121,7 +127,7 @@ sub snippet_html {
             $str .= $buffer;
         }
     };
-    _redspans_traverse(\&spit_snippet_html,%colors);
+    $self->_redspans_traverse(\&spit_snippet_html,%colors);
 
     $str .= '</pre>';
 
@@ -174,7 +180,7 @@ HTML
         }
     };
 
-    _redspans_traverse(\&spit_simple_html,%colors);
+    $self->_redspans_traverse(\&spit_simple_html,%colors);
 
     $str .= <<'HTML';
     </pre>
@@ -251,7 +257,7 @@ HTML
         }
     };
 
-    _redspans_traverse(\&spit_full_html,%colors);
+    $self->_redspans_traverse(\&spit_full_html,%colors);
 
     $str .= <<'HTML';
     </pre>
@@ -283,7 +289,7 @@ sub ansi_text {
         }
     };
 
-    _redspans_traverse(\&spit_ansi_text,%colors);
+    $self->_redspans_traverse(\&spit_ansi_text,%colors);
 
     return $str;
 }
@@ -304,7 +310,7 @@ sub parse_trees {
         push @{$parse_trees}, [@ARG];
     };
 
-    _redspans_traverse(\&spit_parse_tree,%colors);
+    $self->_redspans_traverse(\&spit_parse_tree,%colors);
 
     return $parse_trees;
 }
@@ -389,14 +395,14 @@ sub _read_ansi_file {
 # colors hash.
 #---------------------------------------------------------------
 sub _redspans_traverse {
-    my ($process_buffer,%colors) = @ARG;
-
+    my ($self,$process_buffer,%colors) = @ARG;
+    my @loc = @{$self->{loc}};
     my ($last_tree,$buffer, $last_type) = (q{},q{},q{});
     for my $i (0 .. @loc-1) {
         if(! defined $loc[$i]) {
             next;
         }
-        my $c = substr $src_text, $i, 1;
+        my $c = substr $self->{src_text}, $i, 1;
         my $tree = q{};
         for my $action_ref (@{$loc[$i]}) {
             $tree .= ${$action_ref} . q{ };
