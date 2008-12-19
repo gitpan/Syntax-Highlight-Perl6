@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 24485 2008-12-19 08:35:31Z azawawi $
+# $Id: Perl6.pm 24487 2008-12-19 09:51:02Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.0293';
+our $VERSION = '0.0294';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -59,8 +59,9 @@ sub new {
     $options{utf8_decode} = $options{utf8_decode} // 1;
 
     #is 'text' undefined?
-    croak "'text' option is not found in $class->new"
-        if (!$options{text});
+    if(! defined $options{text}) {
+        croak "'text' option is not found in $class->new"
+    }
 
     my $self = bless \%options, $class;
     $self->{parser} = 0;
@@ -87,6 +88,7 @@ sub _lazy_parse {
         my $len = length $src_text;
         if($len == 0) {
             $src_text = q{ };
+            $len = 1;
         }
         $loc[$len - 1] = [];
 
