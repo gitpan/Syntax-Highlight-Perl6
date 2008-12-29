@@ -1,5 +1,15 @@
 Revision history for Syntax::Highlight::Perl6.
 
+0.0296 Dec 29 2008
+    - Moved to Module::Install
+    - Cursor.pmc - Fixed the log file creation even though debug is disabled
+    - Removed bug from BUGS section 'A log file is always created when
+      using this module'.
+    - Fix Cursor.pmc STD5DEBUG warning message
+    - Added tests for script/hilitep6 
+    - Fix $DELIM warning bug caused by gimme4
+    - Updated perl6.vim
+
 0.0295 Dec 19 2008
     - Fixed _escape_html to actually work
     - Added tests to verify that html escaping works

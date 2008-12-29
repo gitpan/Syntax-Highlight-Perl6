@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 24488 2008-12-19 12:50:37Z azawawi $
+# $Id: Perl6.pm 24674 2008-12-29 08:07:01Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.0295';
+our $VERSION = '0.0296';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -736,10 +736,6 @@ You have to put "use STD;" before using this module.
 
     use STD; # this must be first for now
     use Syntax::Highlight::Perl6;
-
-=item * A log file is always created when using this module.
-
-This is a bug and im working on it. Most probably it is STD.pm-related
 
 =item * Directory 'lex' is created when using this module.
 

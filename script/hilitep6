@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: hilitep6 24488 2008-12-19 12:50:37Z azawawi $
+# $Id: hilitep6 24674 2008-12-29 08:07:01Z azawawi $
 #
 
 # Core modules
@@ -22,7 +22,7 @@ use STD;
 use Syntax::Highlight::Perl6;
 
 #CPAN version
-our $VERSION = '0.0295';
+our $VERSION = '0.0296';
 
 # my variables
 my ($clean_html,$help) = (0,0);
@@ -44,7 +44,7 @@ sub main {
     );
 
     if ($help) {
-        croak <<"HELP";
+        say <<"HELP";
 USAGE:
     $PROGRAM_NAME [options] [file] [rule]
 
@@ -66,6 +66,7 @@ USAGE:
     --ansi-text=filename
         write simple-mode ansi color text to filename (- for STDOUT)
 HELP
+        return; #exit
     }
 
     #default is --simple-html=- if no option is selected

@@ -1,11 +1,8 @@
-#########################
-
+use strict;
+use warnings;
 use Test::More tests => 36;
 use Test::Exception;
 
-#this is needed for now before using my module
-#STD is should be used first otherwise you'll see this error after new()
-#Can't call method "bless" on an undefined value at
 use STD;
 
 #it can be used...
@@ -74,9 +71,9 @@ like( $p->snippet_html, '/foo/i', 'and first instance is not affected');
 
 #tests for correct _escape_html behavior
 like( $q->snippet_html, '/&lt;&gt;/', 
-    'snippet_html & _escape_html works');
+    'snippet_html & html escaping works');
 like( $q->snippet_html, '/&amp;/', 
-    'snippet_html & _escape_html works');
+    'snippet_html & html escaping works');
 like( $q->simple_html, '/&quot;/', 
     'simple_html html escaping works');
 like( $q->full_html, '/&lt;&gt;/',
