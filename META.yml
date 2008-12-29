@@ -21,4 +21,4 @@ requires:
   Term::ANSIColor: 1.12
   YAML::Syck: 1.04
   perl: 5.01
-version: 0.0296
+version: 0.02961
