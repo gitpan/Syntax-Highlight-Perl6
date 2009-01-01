@@ -6,7 +6,7 @@ build_requires:
   Test::More: 0.42
 distribution_type: module
 generated_by: 'Module::Install version 0.77'
-license: artistic
+license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
@@ -16,9 +16,11 @@ no_index:
     - inc
     - t
 requires:
-  Moose: 0.63
+  Moose: 0.64
   Readonly: 1.03
   Term::ANSIColor: 1.12
-  YAML::Syck: 1.04
+  YAML::Syck: 1.05
   perl: 5.01
-version: 0.02961
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.02962

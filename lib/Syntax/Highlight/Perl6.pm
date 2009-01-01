@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 24676 2008-12-29 09:24:03Z azawawi $
+# $Id: Perl6.pm 24718 2009-01-01 08:55:01Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.02961';
+our $VERSION = '0.02962';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -767,13 +767,13 @@ Thanks guys. I could not have done it without you ;-)
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2008 by Ahmad Zawawi
+Copyright (C) 2008-2009 by Ahmad Zawawi
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as the Artistic License 2.0
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 This library also includes the following libraries:
 
-STD.pm by Larry Wall (Artistic License 2.0 - same license)
+STD.pm by Larry Wall (Artistic License 2.0)
 
 JQuery by John Resig (dual licensed under the MIT and GPL licenses).
