@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 24718 2009-01-01 08:55:01Z azawawi $
+# $Id: Perl6.pm 24770 2009-01-05 17:31:53Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.02963';
+our $VERSION = '0.0297';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
