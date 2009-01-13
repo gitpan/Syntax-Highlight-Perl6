@@ -3,6 +3,7 @@ abstract: 'Perl 6 Syntax Highlighter'
 author:
   - 'Written by Ahmad M. Zawawi C<< <ahmad.zawawi at gmail.com> >> '
 build_requires:
+  Test::Exception: 0.27
   Test::More: 0.42
 distribution_type: module
 generated_by: 'Module::Install version 0.77'
@@ -23,4 +24,4 @@ requires:
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.032
+version: 0.033
