@@ -10,14 +10,13 @@ inc/Module/Install/WriteAll.pm
 lib/Cursor.pmc
 lib/LazyMap.pmc
 lib/mangle.pl
-lib/rsc/perl6.vim
 lib/STD.pmc
-lib/Syntax/Highlight/files/jquery-1.3.1.min.js
-lib/Syntax/Highlight/files/p6_style.ansi
-lib/Syntax/Highlight/files/p6_style.css
-lib/Syntax/Highlight/files/p6_style.js
-lib/Syntax/Highlight/files/perl6.vim
 lib/Syntax/Highlight/Perl6.pm
+lib/Syntax/Highlight/Perl6/jquery-1.3.1.min.js
+lib/Syntax/Highlight/Perl6/p6_style.ansi
+lib/Syntax/Highlight/Perl6/p6_style.css
+lib/Syntax/Highlight/Perl6/p6_style.js
+lib/Syntax/Highlight/Perl6/perl6.vim
 Makefile.PL
 MANIFEST			This list of files
 META.yml
