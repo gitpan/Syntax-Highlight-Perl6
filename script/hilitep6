@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: hilitep6 25022 2009-01-25 17:23:58Z azawawi $
+# $Id: hilitep6 25061 2009-01-27 17:43:49Z azawawi $
 #
 
 # Core modules
@@ -22,7 +22,7 @@ use STD;
 use Syntax::Highlight::Perl6;
 
 #CPAN version
-our $VERSION = '0.036';
+our $VERSION = '0.037';
 
 # my variables
 my ($clean_html,$help) = (0,0);

@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 25022 2009-01-25 17:23:58Z azawawi $
+# $Id: Perl6.pm 25061 2009-01-27 17:43:49Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.036';
+our $VERSION = '0.037';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -44,7 +44,7 @@ if(! -f __FILE__) {
     croak 'Syntax::Highlight::Perl6 cannot see where it is installed'
 }
 my $SHARED = realpath(File::Spec->join(
-            dirname(__FILE__),'../../rsc'));
+            dirname(__FILE__),'files'));
 
 #----------------------------------------------------------------
 # Returns the syntax highlighting object. It needs a hash
