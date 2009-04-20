@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 25190 2009-02-04 19:21:52Z azawawi $
+# $Id: Perl6.pm 26300 2009-04-20 08:24:34Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.040';
+our $VERSION = '0.041';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -33,8 +33,6 @@ Readonly my $FILE_JS     => 'p6_style.js';
 Readonly my $FILE_JQUERY => 'jquery-1.3.1.min.js';
 Readonly my $FILE_P6_VIM => 'perl6.vim';
 
-# These are needed for redspans
-$::ACTIONS = __PACKAGE__ . '::Actions';
 
 # my module variables
 my @loc;
@@ -93,7 +91,11 @@ sub _lazy_parse {
         $loc[$len - 1] = [];
 
         #STD parse the text for the rule provided
-        $self->{parser} = STD->parse($src_text, $self->{rule});
+        $self->{parser} = STD->parse(
+            $src_text, 
+            rule => $self->{rule},
+            actions => __PACKAGE__ . '::Actions'
+        );
 
         #we parsed it lazily...
         $self->{src_text} = $src_text;

@@ -3,10 +3,13 @@ abstract: 'Perl 6 Syntax Highlighter'
 author:
   - 'Written by Ahmad M. Zawawi C<< <ahmad.zawawi at gmail.com> >> '
 build_requires:
+  ExtUtils::MakeMaker: 6.42
   Test::Exception: 0.27
-  Test::More: 0.42
+  Test::More: 0.86
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.77'
+generated_by: 'Module::Install version 0.84'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,11 +20,11 @@ no_index:
     - inc
     - t
 requires:
-  Moose: 0.67
+  Moose: 0.74
   Readonly: 1.03
-  Term::ANSIColor: 1.12
+  Term::ANSIColor: 2.00
   YAML::Syck: 1.05
-  perl: 5.01
+  perl: 5.10.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.040
+version: 0.041

@@ -5,8 +5,10 @@ inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
+lib/CORE.pad
 lib/Cursor.pmc
 lib/LazyMap.pmc
 lib/mangle.pl
