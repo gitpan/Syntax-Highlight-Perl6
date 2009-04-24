@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 26303 2009-04-20 08:44:36Z azawawi $
+# $Id: Perl6.pm 26389 2009-04-24 05:20:48Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.042';
+our $VERSION = '0.043';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -122,7 +122,7 @@ sub snippet_html {
     $str .= '<pre>';
 
     local *spit_snippet_html = sub {
-        my ($i, $buffer, $rule, $tree) = @ARG;
+        my ($i, $buffer, $rule, $tree, $lineno) = @ARG;
         $buffer = _escape_html($buffer);
         my $style = $colors{$rule};
         if($rule) {
@@ -175,7 +175,7 @@ sub simple_html {
 HTML
 
     local *spit_simple_html = sub {
-        my ($i, $buffer, $rule, $tree) = @ARG;
+        my ($i, $buffer, $rule, $tree, $lineno) = @ARG;
         $buffer = _escape_html($buffer);
         if($rule) {
             $str .= qq{<span class="$rule">$buffer</span>};
@@ -251,7 +251,7 @@ sub full_html {
 HTML
 
     local *spit_full_html = sub {
-        my ($i, $buffer, $rule, $tree) = @ARG;
+        my ($i, $buffer, $rule, $tree, $lineno) = @ARG;
         $buffer = _escape_html($buffer);
         $str .= qq{<span id="tree_$i" style="display:none;">$tree</span>};
         if($rule) {
@@ -284,7 +284,7 @@ sub ansi_text {
     my %colors = _read_ansi_file();
 
     local *spit_ansi_text = sub {
-        my ($i, $buffer, $rule, $tree) = @ARG;
+        my ($i, $buffer, $rule, $tree, $lineno) = @ARG;
         if($rule) {
             my $color = $colors{$rule};
             $str .= (color $color) . $buffer. (color 'reset');
@@ -316,10 +316,11 @@ sub tokens {
             'buffer'    => $ARG[1],
             'rule'      => $ARG[2],
             'tree'      => $ARG[3],
+            'lineno'    => $ARG[4],
         };
     };
     $self->_redspans_traverse(\&spit_parse_tree,%colors);
-
+	
     return @tokens;
 }
 
@@ -406,6 +407,7 @@ sub _redspans_traverse {
     my ($self,$process_buffer,%colors) = @ARG;
     my @loc = @{$self->{loc}};
     my ($last_tree,$buffer, $last_type) = (q{},q{},q{});
+    my $parser = $self->{parser};
     for my $i (0 .. @loc-1) {
         if(! defined $loc[$i]) {
             next;
@@ -450,7 +452,7 @@ sub _redspans_traverse {
                 }
             }
             #now delegate printing to a callback
-            $process_buffer->($i, $buffer, $rule_to_color, $last_tree);
+            $process_buffer->($i, $buffer, $rule_to_color, $last_tree, $parser->lineof($i));
             $buffer = $c;
         } else {
             $buffer .= $c;
@@ -665,13 +667,13 @@ Returns a Perl highlighted ANSI escape color string.
 Returns an array of hashes containing parsed token records.
 The hash record is structured as:
 
-    +----------------------------------------------+
-    | Matched   | Matched | Matched   | Parse tree |
-    | Last      | string  | rule      | separated  |
-    | Position  | buffer  | name      | by spaces  |
-    |           |         |           |            |
-    | $last_pos | $buffer | $rule     | $tree      |
-    +----------------------------------------------+
+    +-----------+---------+-----------+------------+---------+
+    | Matched   | Matched | Matched   | Parse tree | Matched |
+    | Last      | string  | rule      | separated  | Line    |
+    | Position  | buffer  | name      | by spaces  | Number  |
+    |           |         |           |            |         |
+    | $last_pos | $buffer | $rule     | $tree      | $lineno |
+    +-----------+---------+-----------+------------+---------+
 
 An example of the C<tokens> method in action:
 
