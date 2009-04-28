@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 26445 2009-04-26 09:09:47Z azawawi $
+# $Id: Perl6.pm 26520 2009-04-28 07:46:30Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -24,7 +24,7 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.46';
+our $VERSION = '0.47';
 
 # filename constants
 Readonly my $FILE_CSS    => 'p6_style.css';
@@ -419,7 +419,6 @@ sub _redspans_traverse {
         }
         if($tree ne $last_tree) {
             my $rule_to_color = 0;
-            $buffer = $buffer;
             my @rules = ();
             if($last_tree ne q{}) {
                 @rules = reverse split / /,$last_tree;
