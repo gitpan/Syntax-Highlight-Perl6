@@ -20,11 +20,11 @@ no_index:
     - inc
     - t
 requires:
-  Moose: 0.75
+  Moose: 0.76
   Readonly: 1.03
   Term::ANSIColor: 2.00
-  YAML::Syck: 1.05
+  YAML::Syck: 1.07
   perl: 5.10.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.47
+version: 0.48
