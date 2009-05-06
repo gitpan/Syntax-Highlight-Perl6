@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 26682 2009-05-05 17:13:03Z azawawi $
+# $Id: Perl6.pm 26684 2009-05-05 17:32:04Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -16,7 +16,6 @@ use Cwd qw(realpath);
 require Exporter;
 
 # cpan modules
-use Readonly;
 use Term::ANSIColor;
 
 # Larry's STD.pm
@@ -24,14 +23,14 @@ use STD;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.51';
+our $VERSION = '0.52';
 
 # filename constants
-Readonly my $FILE_CSS    => 'p6_style.css';
-Readonly my $FILE_ANSI   => 'p6_style.ansi';
-Readonly my $FILE_JS     => 'p6_style.js';
-Readonly my $FILE_JQUERY => 'jquery-1.3.2.min.js';
-Readonly my $FILE_P6_VIM => 'perl6.vim';
+my $FILE_CSS    = 'p6_style.css';
+my $FILE_ANSI   = 'p6_style.ansi';
+my $FILE_JS     = 'p6_style.js';
+my $FILE_JQUERY = 'jquery-1.3.2.min.js';
+my $FILE_P6_VIM = 'perl6.vim';
 
 
 # my module variables
