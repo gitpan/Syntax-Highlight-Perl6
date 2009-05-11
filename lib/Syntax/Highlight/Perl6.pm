@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 26710 2009-05-07 08:50:06Z azawawi $
+# $Id: Perl6.pm 26747 2009-05-09 14:45:35Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -11,12 +11,9 @@ use Carp;
 
 require Exporter;
 
-# cpan modules
-use Term::ANSIColor;
-
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.54';
+our $VERSION = '0.55';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -289,7 +286,9 @@ sub ansi_text {
         my ($i, $buffer, $rule, $tree, $lineno) = @_;
         if($rule) {
             my $color = $colors{$rule};
-            $str .= (Term::ANSIColor::color $color) . $buffer. (Term::ANSIColor::color 'reset');
+            $str .= Term::ANSIColor::color($color) . 
+                $buffer .
+                Term::ANSIColor::color('reset');
         } else {
             $str .= $buffer;
         }
