@@ -24,5 +24,4 @@ META.yml
 README
 script/hilitep6
 t/00-syntax.t
-t/01-vim.t
 t/02-hilitep6.t
