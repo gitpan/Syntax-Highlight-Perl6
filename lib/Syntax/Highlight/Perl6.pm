@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 26971 2009-05-30 05:41:06Z azawawi $
+# $Id: Perl6.pm 27114 2009-06-18 01:49:17Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -13,7 +13,7 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.60';
+our $VERSION = '0.61';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -453,8 +453,6 @@ sub _redspans_traverse {
     sub AUTOLOAD {
         my $self = shift;
         my $C = shift;
-        my $rule = shift;
-        return unless $rule;
         my $F = $C->{_from};
         my $P = $C->{_pos};
         $AUTOLOAD =~ s/^Syntax::Highlight::Perl6::Actions:://x;
