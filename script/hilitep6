@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: hilitep6 27117 2009-06-18 07:37:20Z azawawi $
+# $Id: hilitep6 27161 2009-06-21 16:10:29Z azawawi $
 #
 
 # Core modules
@@ -13,7 +13,7 @@ use feature qw(say switch);
 use Carp;
 
 #CPAN version
-our $VERSION = '0.62';
+our $VERSION = '0.63';
 
 # my variables
 my ($clean_html,$help) = (0,0);
