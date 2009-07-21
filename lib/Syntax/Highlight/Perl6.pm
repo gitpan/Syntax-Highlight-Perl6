@@ -1,5 +1,5 @@
 #
-# $Id: Perl6.pm 27161 2009-06-21 16:10:29Z azawawi $
+# $Id: Perl6.pm 27478 2009-07-08 06:34:56Z azawawi $
 #
 package Syntax::Highlight::Perl6;
 
@@ -13,7 +13,7 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.64';
+our $VERSION = '0.65';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -685,11 +685,9 @@ for now.
 
 =head1 SEE ALSO
 
-L<Text::VimColor>
-
 Discussion about this module and STD.pm is usually in #perl6
 (irc://irc.freenode.net/perl6). This module lives in 
-http://svn.pugscode.org/pugs/misc/Syntax-Highlight-Perl6 . Larry Wall's 
+http://svn.perlide.org/padre/trunk/Syntax-Highlight-Perl6 . Larry Wall's 
 C<STD.pm> lives in http://svn.pugscode.org/pugs/src/perl6 . 
 
 =head1 BUGS AND LIMITATIONS

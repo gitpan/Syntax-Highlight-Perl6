@@ -27,4 +27,3 @@ t/00-syntax.t
 t/01-std.t
 t/02-hilitep6.t
 test.p6
-viv.pl
