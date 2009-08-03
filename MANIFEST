@@ -1,4 +1,5 @@
 Changes
+copy_std.pl
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -10,8 +11,12 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/CORE.pad
 lib/Cursor.pmc
+lib/DEBUG.pmc
 lib/LazyMap.pmc
 lib/mangle.pl
+lib/NAME.pmc
+lib/NULL.pad
+lib/STASH.pmc
 lib/STD.pmc
 lib/Syntax/Highlight/Perl6.pm
 lib/Syntax/Highlight/Perl6/jquery-1.3.2.min.js
