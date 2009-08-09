@@ -13,7 +13,7 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION = '0.67';
+our $VERSION = '0.68';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -385,8 +385,9 @@ sub _redspans_traverse {
     my @loc = @{$self->{loc}};
     my ($last_tree,$buffer, $last_type) = (q{},q{},q{});
     my $parser = $self->{parser};
-    for my $i (0 .. @loc-1) {
-        if(! defined $loc[$i]) {
+    my $len = length $self->{src_text};
+    for my $i (0 .. $len-1) {
+        if(not defined $loc[$i]) {
             next;
         }
         my $c = substr $self->{src_text}, $i, 1;
