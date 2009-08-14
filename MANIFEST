@@ -1,5 +1,4 @@
 Changes
-copy_std.pl
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -31,4 +30,3 @@ script/hilitep6
 t/00-syntax.t
 t/01-std.t
 t/02-hilitep6.t
-test.p6
