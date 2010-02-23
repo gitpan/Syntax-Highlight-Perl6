@@ -13,13 +13,13 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION   = '0.78';
+our $VERSION   = '0.79';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
 my $FILE_ANSI   = 'p6_style.ansi';
 my $FILE_JS     = 'p6_style.js';
-my $FILE_JQUERY = 'jquery-1.3.2.min.js';
+my $FILE_JQUERY = 'jquery-1.4.2.min.js';
 
 
 # my module variables
