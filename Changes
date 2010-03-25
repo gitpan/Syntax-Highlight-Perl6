@@ -1,13 +1,16 @@
 Revision history for Syntax::Highlight::Perl6.
 
+0.80 2010.3.25
+	Bundled the cooler STD.pm (lwall++) r30194
+
 0.79 2010.2.23
 	Bundled the latest awesome STD.pm (lwall++) r29781
 	Used temporary folders for STD artifacts while testing
 	Fixed Cursor.pmc so that syml folder is created properly inside the temp directory
 	Upgrade to jQuery 1.4.2 for the extra performance.
 	Added RE_ast.pmc
-    hilitep6 is now a bit slower than before since it uses a temporary folder for
-        STD artifacts
+	hilitep6 is now a bit slower than before since it uses a temporary folder for
+	STD artifacts
 
 0.78 2010.1.10
 	Bundled the latest STD.pm from lwall++
