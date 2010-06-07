@@ -10,6 +10,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/CORE.pad
 lib/Cursor.pmc
+lib/CursorBase.pmc
 lib/DEBUG.pmc
 lib/LazyMap.pmc
 lib/mangle.pl
