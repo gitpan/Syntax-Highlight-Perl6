@@ -10,7 +10,7 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION   = '0.81';
+our $VERSION   = '0.82';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -86,9 +86,10 @@ sub _lazy_parse {
 		require STD;
 		$self->{parser} = STD->parse(
 			$src_text,
-			rule       => $self->{rule},
-			actions    => __PACKAGE__ . '::Actions',
-			tmp_prefix => $self->{tmp_prefix},
+			rule             => $self->{rule},
+			actions          => __PACKAGE__ . '::Actions',
+			tmp_prefix       => $self->{tmp_prefix},
+            syml_search_path => [$SHARED],
 		);
 
 		#we parsed it lazily...
@@ -428,6 +429,8 @@ sub _redspans_traverse {
 			}
 
 			#now delegate printing to a callback
+			#HACK to prevent parser->lineof(position) from breaking. lineof should be called in the same dynamic scope of parsing
+			$::ORIG = $self->{src_text};  
 			$process_buffer->( $i, $buffer, $rule_to_color, $last_tree, $parser->lineof($i) );
 			$buffer = $c;
 		} else {
