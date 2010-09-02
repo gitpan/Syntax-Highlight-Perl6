@@ -10,7 +10,7 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION   = '0.84';
+our $VERSION   = '0.85';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
@@ -86,10 +86,9 @@ sub _lazy_parse {
 		require STD;
 		$self->{parser} = STD->parse(
 			$src_text,
-			rule             => $self->{rule},
-			actions          => __PACKAGE__ . '::Actions',
-			tmp_prefix       => $self->{tmp_prefix},
-            syml_search_path => [$SHARED],
+			rule       => $self->{rule},
+			actions    => __PACKAGE__ . '::Actions',
+			tmp_prefix => $self->{tmp_prefix},
 		);
 
 		#we parsed it lazily...
@@ -430,7 +429,7 @@ sub _redspans_traverse {
 
 			#now delegate printing to a callback
 			#HACK to prevent parser->lineof(position) from breaking. lineof should be called in the same dynamic scope of parsing
-			$::ORIG = $self->{src_text};  
+			$::ORIG = $self->{src_text};
 			$process_buffer->( $i, $buffer, $rule_to_color, $last_tree, $parser->lineof($i) );
 			$buffer = $c;
 		} else {
@@ -559,7 +558,7 @@ Syntax::Highlight::Perl6 - Perl 6 Syntax Highlighter
 
 =head1 DESCRIPTION
 
-C<Syntax::Highlight::Perl6> parses Perl 6 source code using an embedded STD.pm6. 
+C<Syntax::Highlight::Perl6> parses Perl 6 source code using L<STD> cpan package. 
 It matches parse tree nodes to colors then returns them in different output formats.
 It can be used to create web pages with colorful source code samples in its
 simple and snippet html modes, or it can be used as a learning tool in examining
