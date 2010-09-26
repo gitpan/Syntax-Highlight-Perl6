@@ -16,7 +16,7 @@ name: Syntax-Highlight-Perl6
 provides:
   Syntax::Highlight::Perl6:
     file: lib/Syntax/Highlight/Perl6.pm
-    version: 0.86
+    version: 0.87
   Syntax::Highlight::Perl6::Actions:
     file: lib/Syntax/Highlight/Perl6.pm
 requires:
@@ -25,4 +25,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://svn.perlide.org/padre/trunk/Syntax-Highlight-Perl6/
-version: 0.86
+version: 0.87
