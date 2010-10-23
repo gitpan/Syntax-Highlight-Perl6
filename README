@@ -1,14 +1,13 @@
-Syntax-Highlight-Perl6
-======================
 
-Highlights Perl 6 code. For more information, please refer to 
-perldoc Syntax::Highlight::Perl6.
 
-INSTALLATION
+This archive contains the distribution Syntax-Highlight-Perl6,
+version 0.88:
 
-To install this module type the following:
+  Perl 6 Syntax Highlighter
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+This software is copyright (c) 2010 by Ahmad M. Zawawi.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+

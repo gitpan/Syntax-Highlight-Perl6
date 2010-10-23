@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# ABSTRACT: Command-line interface to highlight Perl 6 code
+# PODNAME: hilitep6
+
 # Core modules
 use 5.010;
 use strict;
@@ -7,9 +10,6 @@ use warnings;
 use utf8;
 use feature qw(say switch);
 use Carp;
-
-#CPAN version
-our $VERSION = '0.87';
 
 # my variables
 my ( $clean_html, $help ) = ( 0, 0 );
@@ -166,11 +166,22 @@ sub highlight_match {
 # exectution start here
 main @ARGV;
 
-__END__
+
+
+=pod
 
 =head1 NAME
 
-hilitep6 - command-line interface to highlight Perl 6 code
+hilitep6 - Command-line interface to highlight Perl 6 code
+
+=head1 VERSION
+
+version 0.88
+
+=head1 DESCRIPTION
+
+The tool uses L<Syntax::Highlight::Perl6> to highlight perl 6 source
+code into html, and ansi escape color sequences.
 
 =head1 USAGE
 
@@ -195,19 +206,23 @@ hilitep6 - command-line interface to highlight Perl 6 code
     # write simple ansi-colored output to STDOUT
     hilitep6 --ansi-text=- foo.pl
 
-=head1 DESCRIPTION
-
-The tool uses L<Syntax::Highlight::Perl6> to highlight perl 6 source
-code into html, and ansi escape color sequences.
-
 =head1 SEE ALSO
 
 See L<Syntax::Highlight::Perl6>
 
 =head1 AUTHOR
 
-Written by Ahmad M. Zawawi C<< <ahmad.zawawi at gmail.com> >>
+Ahmad M. Zawawi <ahmad.zawawi@gmail.com>
 
-=head1 LICENSE AND COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
-The same license as L<Syntax::Highlight::Perl6>
+This software is copyright (c) 2010 by Ahmad M. Zawawi.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+
+__END__
+

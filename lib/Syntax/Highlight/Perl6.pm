@@ -1,4 +1,9 @@
 package Syntax::Highlight::Perl6;
+BEGIN {
+  $Syntax::Highlight::Perl6::VERSION = '0.88';
+}
+
+# ABSTRACT: Perl 6 Syntax Highlighter
 
 # core modules & directives
 use 5.010;
@@ -10,13 +15,12 @@ require Exporter;
 
 # exports and version
 our @EXPORT_OK = qw();
-our $VERSION   = '0.87';
 
 # filename constants
 my $FILE_CSS    = 'p6_style.css';
 my $FILE_ANSI   = 'p6_style.ansi';
 my $FILE_JS     = 'p6_style.js';
-my $FILE_JQUERY = 'jquery-1.4.2.min.js';
+my $FILE_JQUERY = 'jquery-1.4.3.min.js';
 
 
 # my module variables
@@ -30,8 +34,6 @@ if ( !-f __FILE__ ) {
 require File::Basename;
 require File::Spec;
 require Cwd;
-
-my $SHARED = Cwd::realpath( File::Spec->join( File::Basename::dirname(__FILE__), 'Perl6' ) );
 
 #----------------------------------------------------------------
 # Returns the syntax highlighting object. It needs a hash
@@ -448,6 +450,9 @@ sub _redspans_traverse {
 {
 
 	package Syntax::Highlight::Perl6::Actions;
+BEGIN {
+  $Syntax::Highlight::Perl6::Actions::VERSION = '0.88';
+}
 
 	our $AUTOLOAD;
 
@@ -502,7 +507,8 @@ sub _escape_html {
 # convert to shared package real resource path
 #-----------------------------------------------------
 sub _shared {
-	return File::Spec->join( $SHARED, shift );
+	require File::ShareDir;
+	return File::ShareDir::dist_file('Syntax-Highlight-Perl6', shift);
 }
 
 #-----------------------------------------------------
@@ -524,11 +530,17 @@ sub _slurp {
 
 #------------------ T H E   E N D --------------------
 
-__END__
+
+
+=pod
 
 =head1 NAME
 
 Syntax::Highlight::Perl6 - Perl 6 Syntax Highlighter
+
+=head1 VERSION
+
+version 0.88
 
 =head1 SYNOPSIS
 
@@ -558,7 +570,7 @@ Syntax::Highlight::Perl6 - Perl 6 Syntax Highlighter
 
 =head1 DESCRIPTION
 
-C<Syntax::Highlight::Perl6> parses Perl 6 source code using L<STD> cpan package. 
+C<Syntax::Highlight::Perl6> parses Perl 6 source code using L<STD> cpan package.
 It matches parse tree nodes to colors then returns them in different output formats.
 It can be used to create web pages with colorful source code samples in its
 simple and snippet html modes, or it can be used as a learning tool in examining
@@ -683,16 +695,16 @@ The shortened output looks like:
 
 =head1 INCOMPATIBILITIES
 
-This module is dependent on Perl 5.10 features namely the regex engine 
-and state variables (for STD.pm6). So Perl 5.8.x support will NOT be available
-for now.
+This module is dependent on Perl 5.10 features namely the regex engine
+and state variables (for STD.pm6). So there will be no Perl 5.8.x support in
+the future.
 
 =head1 SEE ALSO
 
 Discussion about this module and STD.pm6 is usually in #perl6
-(irc://irc.freenode.net/perl6). This module lives in 
-http://svn.perlide.org/padre/trunk/Syntax-Highlight-Perl6 . Larry Wall's 
-C<STD.pm6> lives in http://svn.pugscode.org/pugs/src/perl6 . 
+(irc://irc.freenode.net/perl6). This module lives in
+http://svn.perlide.org/padre/trunk/Syntax-Highlight-Perl6 . Larry Wall's
+C<STD.pm6> lives in http://github.com/perl6/std.
 
 =head1 BUGS AND LIMITATIONS
 
@@ -710,22 +722,9 @@ You have to put "use STD;" before using this module.
     use STD; # this must be first for now
     use Syntax::Highlight::Perl6;
 
-=item * Directory 'lex' is created when using this module.
-
-STD.pm6 caches digraphs and the matched rules in there.
-So this is Pretty Voodoo Stuff. Otherwise it will be pretty slow.
-
-=item * Slow startup when using the module for the first time
-
-That is related to the creation of the cached 'lex'ing directory by STD.pm6.
-I<This happens only once.>
-
 =back
 
-=head1 AUTHOR
-
-Written by Ahmad M. Zawawi C<< <ahmad.zawawi at gmail.com> >> 
-(C<azawawi> in C<#perl6>).
+=head1 ACKNOWLEDGEMENTS
 
 The project idea was inspired by Moritz Lenz (moritz) -
 http://www.nntp.perl.org/group/perl.perl6.users/2008/07/msg788.html .
@@ -735,17 +734,25 @@ It was replaced afterwards for performance reasons with Larry Wall's
 C<redspans> traversal code. C<redspans> stands for C<red> for reductions,
 and C<spans> from the "from/to span calculations".
 
-Thanks guys. I could not have done it without you ;-)
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2008-2010 by Ahmad Zawawi
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
 This library also includes the following libraries:
 
-STD.pm6 by Larry Wall (Artistic License 2.0)
-
 JQuery by John Resig (dual licensed under the MIT and GPL licenses).
+
+Thanks guys. I could not have done it without you ;-)
+
+=head1 AUTHOR
+
+Ahmad M. Zawawi <ahmad.zawawi@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ahmad M. Zawawi.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+
+__END__
+
